@@ -72,6 +72,7 @@ NUMBER:
     | DIGIT* (',' DIGIT DIGIT DIGIT)* '.' DIGIT+;
 
 EQUAL: '=';
+UNEQUAL: '\\neq';
 LT: '<';
 LTE: '\\leq';
 GT: '>';
@@ -84,7 +85,7 @@ SYMBOL: '\\' [a-zA-Z]+;
 math: relation;
 
 relation:
-    relation (EQUAL | LT | LTE | GT | GTE) relation
+    relation (EQUAL | LT | LTE | GT | GTE |UNEQUAL) relation
     | expr;
 
 equality:

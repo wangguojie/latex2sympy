@@ -73,6 +73,8 @@ def convert_relation(rel):
         return sympy.GreaterThan(lh, rh)
     elif rel.EQUAL():
         return sympy.Eq(lh, rh)
+    elif rel.UNEQUAL():
+        return sympy.Ne(lh, rh)
 
 def convert_expr(expr):
     return convert_add(expr.additive())
@@ -85,7 +87,9 @@ def convert_add(add):
     elif add.SUB():
         lh = convert_add(add.additive(0))
         rh = convert_add(add.additive(1))
-        return sympy.Add(lh, -1 * rh, evaluate=False)
+        # return sympy.Add(lh, -1 * rh, evaluate=False)
+        # just keep the origin expression, don't simplify
+        return sympy.Add(lh, sympy.Mul(-1, rh, evaluate=False), evaluate=False)
     else:
         return convert_mp(add.mp())
 
@@ -338,7 +342,7 @@ def convert_func(func):
         if name in ["arsinh", "arcosh", "artanh"]:
             name = "a" + name[2:]
             expr = getattr(sympy.functions, name)(arg, evaluate=False)
-            
+
         if (name=="log" or name=="ln"):
             if func.subexpr():
                 base = convert_expr(func.subexpr().expr())
@@ -513,6 +517,7 @@ def test_sympy():
     print(process_sympy("\\int_{5x}^{2} x^2 dx"))
     print(process_sympy("\\int x^2 dx"))
     print(process_sympy("2 4 5 - 2 3 1"))
+    print(process_sympy("xy \\neq 0"))
 
 if __name__ == "__main__":
     test_sympy()
